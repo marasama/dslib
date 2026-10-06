@@ -1,0 +1,23 @@
+[package]
+name = "dslr"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+num-traits = "0.2.19"
+memmap2 = "0.9.11"
+egui_plot = "0.37.0"
+eframe = "0.36.2"
+
+
+[[bin]]
+name = "describe"
+path = "src/bin/describe.rs"
+
+[[bin]]
+name = "gui"
+path = "src/bin/gui/main.rs"
+
+[[bin]]
+name = "histogram"
+path = "src/bin/histogram.rs"
