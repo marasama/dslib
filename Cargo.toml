@@ -21,3 +21,7 @@ path = "src/bin/gui/main.rs"
 [[bin]]
 name = "histogram"
 path = "src/bin/histogram.rs"
+
+[[bin]]
+name = "scatter_plot"
+path = "src/bin/scatter_plot.rs"

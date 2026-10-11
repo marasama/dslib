@@ -1,7 +1,7 @@
 use dslr::dslib::csv_parser::{read_csv, Column, CsvData};
 use eframe::egui;
 use egui_plot::{Bar, BarChart, Legend, Plot};
-use std::{collections::HashMap, env, fmt::format, process::exit};
+use std::{collections::HashMap, env, process::exit};
 
 fn main() -> eframe::Result<()> {
     let arv: Vec<String> = env::args().collect();
@@ -134,55 +134,35 @@ fn draw_histogram(
                 };
                 counts[idx] += 1.0;
             }
-            let bar_data: Vec<(String, f64)> = counts
+            let bar_data: Vec<(String, f64, f64)> = counts
                 .iter()
                 .enumerate()
                 .map(|(idx, count)| {
                     let start = min + (idx as f64) * step_size;
                     let end = start + step_size;
+                    let center = start + step_size / 2.0;
                     let label = format!("{:.1}-{:.1}", start, end);
-                    (label, *count)
+                    (label, center, *count)
                 })
                 .collect();
             let bars: Vec<Bar> = bar_data
                 .iter()
-                .enumerate()
-                .map(|(idx, (s, c))| Bar::new(idx as f64, *c).name(s.as_str()))
+                .map(|(s, x, c)| Bar::new(*x, *c).width(step_size).name(s.as_str()))
                 .collect();
+            let color = class_color(idx_top, 255);
+            (category.to_string(), color, bars)
         })
         .collect()
-    //for (i, k) in data.iter() {
-    //    let mut counts = vec![0.0; seg_count];
-    //    for &val in k {
-    //        let mut idx = ((val - min) / step_size).floor() as usize;
-    //        if idx == seg_count {
-    //            idx = seg_count - 1
-    //        };
-    //        counts[idx] += 1.0;
-    //    }
-    //    let bar_data: Vec<(String, f64)> = counts
-    //        .iter()
-    //        .enumerate()
-    //        .map(|(idx, count)| {
-    //            let start = min + (idx as f64) / step_size;
-    //            let end = start + step_size;
-    //            let label = format!("{:.1}-{:.1}", start, end);
-    //            (label, *count)
-    //        })
-    //        .collect();
-    //    let data: Vec<(&str, f64)> = bar_data.iter().map(|(s, c)| (s.as_str(), *c)).collect();
-    //    let chart = BarChart::new(
-    //        *i,
-    //        data.iter()
-    //            .enumerate()
-    //            .map(|(idx, (s, v))| Bar::new(idx as f64, *v).name(s))
-    //            .collect(),
-    //    );
-    //}
 }
 
 impl eframe::App for LogisticRegression {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::Panel::top("hist")
+            .resizable(true)
+            .default_size(500.0)
+            .show(ui, |ctx| {
+                ctx.label("Zort");
+            });
         egui::Panel::left("settings")
             .resizable(false)
             .default_size(400.0)
@@ -201,7 +181,8 @@ impl eframe::App for LogisticRegression {
                     });
             });
         egui::CentralPanel::default().show(ui, |ctx| {
-            if self.prev_sel_idx != self.selected_class_idx {
+            let needs_reset = self.prev_sel_idx != self.selected_class_idx;
+            if needs_reset {
                 self.charts = draw_histogram(
                     &self.data.columns[1],
                     &self.data.columns[self.selected_class_idx as usize],
@@ -212,16 +193,13 @@ impl eframe::App for LogisticRegression {
             Plot::new("histogram")
                 .legend(Legend::default())
                 .show(ctx, |plot_ui| {
+                    if needs_reset {
+                        plot_ui.set_auto_bounds(egui::Vec2b::TRUE);
+                    }
                     for (a, s, d) in self.charts.iter() {
                         plot_ui.bar_chart(BarChart::new(a, d.clone()).color(*s));
                     }
                 });
         });
-        //egui::Panel::top("hist")
-        //    .resizable(false)
-        //    .default_size(400.0)
-        //    .show(ui, |ctx| {
-        //        ctx.label(hist);
-        //    });
     }
 }
