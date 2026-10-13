@@ -181,6 +181,9 @@ impl eframe::App for LogisticRegression {
                     });
             });
         egui::CentralPanel::default().show(ui, |ctx| {
+            ctx.label("zort");
+        });
+        egui::CentralPanel::default().show(ui, |ctx| {
             let needs_reset = self.prev_sel_idx != self.selected_class_idx;
             if needs_reset {
                 self.charts = draw_histogram(
