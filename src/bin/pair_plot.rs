@@ -245,19 +245,6 @@ impl eframe::App for LogisticRegression {
             let plot_h = (available.y - header_height).max(0.0);
             let cell_size = (plot_w / 13.0).min(plot_h / 13.0);
 
-            let needs_reset = self.prev_sel_idx_1 != self.selected_class_idx_1
-                || self.prev_sel_idx_2 != self.selected_class_idx_2;
-            if needs_reset {
-                self.points = draw_scatter_plot(
-                    &self.data,
-                    self.selected_class_idx_1 as usize,
-                    self.selected_class_idx_2 as usize,
-                    &self.categories,
-                );
-                self.prev_sel_idx_1 = self.selected_class_idx_1;
-                self.prev_sel_idx_2 = self.selected_class_idx_2;
-            }
-
             // Sütun Başlıkları (Üst Satır)
             ctx.horizontal(|h_ui| {
                 h_ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
@@ -267,14 +254,11 @@ impl eframe::App for LogisticRegression {
                         egui::vec2(cell_size, header_height),
                         egui::Layout::centered_and_justified(egui::Direction::TopDown),
                         |ui| {
-                            ui.add(
-                                egui::Label::new(
-                                    egui::RichText::new(&self.data.headers[col + 6])
-                                        .size(8.5)
-                                        .strong(),
-                                )
-                                .truncate(),
-                            )
+                            ui.add(egui::Label::new(
+                                egui::RichText::new(&self.data.headers[col + 6])
+                                    .size(8.5)
+                                    .strong(),
+                            ))
                             .on_hover_text(&self.data.headers[col + 6]);
                         },
                     );
