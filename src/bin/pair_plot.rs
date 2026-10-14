@@ -234,29 +234,31 @@ fn draw_scatter_plot(
 
 impl eframe::App for LogisticRegression {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        egui::Panel::top("hist").resizable(true).show(ui, |ctx| {
-            ctx.label("Zort");
-        });
+        egui::Panel::top("pair_plots")
+            .resizable(false)
+            .show(ui, |ctx| {
+                ctx.label("Pair Plot");
+            });
         egui::CentralPanel::default().show(ui, |ctx| {
             let available = ctx.available_size();
-            let label_width = 110.0;
-            let header_height = 24.0;
-            let plot_w = (available.x - label_width).max(0.0);
-            let plot_h = (available.y - header_height).max(0.0);
-            let cell_size = (plot_w / 13.0).min(plot_h / 13.0);
+            println!("{:?}", available);
 
+            let x_size = available.x / 14.0;
+            let y_size = available.y / 15.0;
             // Sütun Başlıkları (Üst Satır)
             ctx.horizontal(|h_ui| {
                 h_ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                h_ui.allocate_space(egui::vec2(label_width, header_height));
+                //h_ui.allocate_space(egui::vec2(label_width, header_height));
+                h_ui.allocate_space(egui::vec2(x_size, y_size));
                 for col in 0..13 {
                     h_ui.allocate_ui_with_layout(
-                        egui::vec2(cell_size, header_height),
+                        //egui::vec2(cell_size, header_height),
+                        egui::vec2(x_size, y_size),
                         egui::Layout::centered_and_justified(egui::Direction::TopDown),
                         |ui| {
                             ui.add(egui::Label::new(
                                 egui::RichText::new(&self.data.headers[col + 6])
-                                    .size(8.5)
+                                    .size(11.5)
                                     .strong(),
                             ))
                             .on_hover_text(&self.data.headers[col + 6]);
@@ -272,17 +274,18 @@ impl eframe::App for LogisticRegression {
 
                     // Satır Başlığı (Sol Sütun)
                     row_ui.allocate_ui_with_layout(
-                        egui::vec2(label_width, cell_size),
+                        //egui::vec2(label_width, cell_size),
+                        egui::vec2(x_size, y_size),
                         egui::Layout::right_to_left(egui::Align::Center),
                         |ui| {
                             ui.add_space(4.0);
                             ui.add(
                                 egui::Label::new(
                                     egui::RichText::new(&self.data.headers[rows + 6])
-                                        .size(9.0)
+                                        .size(11.0)
                                         .strong(),
                                 )
-                                .truncate(),
+                                .wrap(),
                             )
                             .on_hover_text(&self.data.headers[rows + 6]);
                         },
@@ -290,8 +293,8 @@ impl eframe::App for LogisticRegression {
 
                     for cols in 0..13 {
                         Plot::new(format!("{}_{}", rows, cols))
-                            .width(cell_size)
-                            .height(cell_size)
+                            .width(x_size)
+                            .height(y_size)
                             .show_y(false)
                             .show_x(false)
                             .show_axes(false)
