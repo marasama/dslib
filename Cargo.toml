@@ -15,8 +15,8 @@ name = "describe"
 path = "src/bin/describe.rs"
 
 [[bin]]
-name = "gui"
-path = "src/bin/gui/main.rs"
+name = "graph_gui"
+path = "src/bin/graph_gui.rs"
 
 [[bin]]
 name = "histogram"

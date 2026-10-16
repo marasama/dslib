@@ -242,13 +242,13 @@ impl<'a> eframe::App for LogisticRegression<'a> {
             window_ui.label(if self.selected_class_idx_1 == self.selected_class_idx_2 {
                 format!(
                     "Histogram of {}",
-                    self.data.headers[self.selected_class_idx_2 as usize]
+                    self.data.headers[self.selected_class_idx_2 as usize + 6]
                 )
             } else {
                 format!(
                     "Scatter Plot of ({} x {})",
-                    self.data.headers[self.selected_class_idx_1 as usize],
-                    self.data.headers[self.selected_class_idx_2 as usize]
+                    self.data.headers[self.selected_class_idx_1 as usize + 6],
+                    self.data.headers[self.selected_class_idx_2 as usize + 6]
                 )
             });
             Plot::new((self.selected_class_idx_1, self.selected_class_idx_2))
@@ -285,8 +285,19 @@ impl<'a> eframe::App for LogisticRegression<'a> {
             // Sütun Başlıkları (Üst Satır)
             ctx.horizontal(|h_ui| {
                 h_ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
-                //h_ui.allocate_space(egui::vec2(label_width, header_height));
+
                 h_ui.allocate_space(egui::vec2(x_size, y_size));
+                //h_ui.allocate_ui_with_layout(
+                //    //egui::vec2(cell_size, header_height),
+                //    egui::vec2(x_size, y_size),
+                //    egui::Layout::centered_and_justified(egui::Direction::TopDown),
+                //    |ui| {
+                //        ui.add(egui::Label::new(
+                //            egui::RichText::new("Parking Spot").size(11.5).strong(),
+                //        ))
+                //        .on_hover_text("Parking Spot");
+                //    },
+                //);
                 for col in 0..13 {
                     h_ui.allocate_ui_with_layout(
                         //egui::vec2(cell_size, header_height),
